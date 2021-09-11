@@ -3,8 +3,10 @@ import 'allDetail.dart';
 
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 class DomesticSearchPage extends StatefulWidget {
+  final String category;
+
+  DomesticSearchPage({Key? key, required this.category}) : super(key: key);
   @override
   _DomesticSearchPageState createState() => _DomesticSearchPageState();
 }
@@ -29,7 +31,15 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('주식 정보방검색')),
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(240, 175, 142,100),
+          iconTheme: IconThemeData(color:Colors.black),
+          title: Text((() {
+          if (widget.category =='f'){
+            return '주식 토론방 검색';}
+          return '주식정보방 검색';
+        })(),style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+        ),
         body: Column(
           children: [
             _SearchSection(),
@@ -114,30 +124,22 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
     //데이터 추가하기
     List tList = [];
 
-    sharedPreferences = await SharedPreferences.getInstance();
-    token = sharedPreferences.getString("token"); //token 값 불러오기
 
     if (!isLoading) {
       setState(() {
         isLoading = true;
       });
 
-      var url = "http://13.125.62.90/api/v1/BlogPosts/?category=D&contentsearch=${searchController.text}&page=" +
+      var url = "http://13.125.62.90/api/v1/BlogPosts/?category=${widget.category}&contentsearch=${searchController.text}&page=" +
           (index + 1).toString();
-      print(url);
+
       final response = await dio.get(url);
       maxpage = (response.data['count'] - 1) ~/ 10 + 1;
-      print('맥페${maxpage}');
+
       tList = [];
 
       for (int i = 0; i < response.data['results'].length; i++) {
         tList.add(response.data['results'][i]);
-        if (response.data['results'][i]['category'] == 'D')
-          tList[i]['type'] = '국내';
-        else if (response.data['results'][i]['category'] == 'F')
-          tList[i]['type'] = '해외';
-        else if (response.data['results'][i]['category'] == 'R')
-          tList[i]['type'] = '자유';
         tList[i]['time'] = DateFormat("M월dd일 H:m").format(DateTime.parse(tList[i]['create_dt']));
       }
 
@@ -153,30 +155,21 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
     //데이터 추가하기
     List tList = [];
 
-    sharedPreferences = await SharedPreferences.getInstance();
-    token = sharedPreferences.getString("token"); //token 값 불러오기
-
     if (!isLoading) {
       setState(() {
         isLoading = true;
       });
 
-      var url = "http://13.125.62.90/api/v1/BlogPosts/?category=D&titlesearch=${searchController.text}&page=" +
+      var url = "http://13.125.62.90/api/v1/BlogPosts/?category=${widget.category}&titlesearch=${searchController.text}&page=" +
           (index + 1).toString();
-      print(url);
+
       final response = await dio.get(url);
       maxpage = (response.data['count'] - 1) ~/ 10 + 1;
-      print('맥페${maxpage}');
+
       tList = [];
 
       for (int i = 0; i < response.data['results'].length; i++) {
         tList.add(response.data['results'][i]);
-        if (response.data['results'][i]['category'] == 'D')
-          tList[i]['type'] = '국내';
-        else if (response.data['results'][i]['category'] == 'F')
-          tList[i]['type'] = '해외';
-        else if (response.data['results'][i]['category'] == 'R')
-          tList[i]['type'] = '자유';
         tList[i]['time'] = DateFormat("M월dd일 H:m").format(DateTime.parse(tList[i]['create_dt']));
       }
 
@@ -192,30 +185,22 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
     //데이터 추가하기
     List tList = [];
 
-    sharedPreferences = await SharedPreferences.getInstance();
-    token = sharedPreferences.getString("token"); //token 값 불러오기
 
     if (!isLoading) {
       setState(() {
         isLoading = true;
       });
 
-      var url = "http://13.125.62.90/api/v1/BlogPosts/?category=d&multisearch=${searchController.text}&page=" +
+      var url = "http://13.125.62.90/api/v1/BlogPostsList/?category=${widget.category}&multisearch=${searchController.text}&page=" +
           (index + 1).toString();
       print(url);
       final response = await dio.get(url);
       maxpage = (response.data['count'] - 1) ~/ 10 + 1;
-      print('맥페${maxpage}');
       tList = [];
 
       for (int i = 0; i < response.data['results'].length; i++) {
         tList.add(response.data['results'][i]);
-        if (response.data['results'][i]['category'] == 'D')
-          tList[i]['type'] = '국내';
-        else if (response.data['results'][i]['category'] == 'F')
-          tList[i]['type'] = '해외';
-        else if (response.data['results'][i]['category'] == 'R')
-          tList[i]['type'] = '자유';
+
         tList[i]['time'] = DateFormat("M월dd일 H:m").format(DateTime.parse(tList[i]['create_dt']));
       }
 
@@ -248,7 +233,6 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
               // Add one more item for progress indicator
               padding: EdgeInsets.symmetric(vertical: 8.0),
               itemBuilder: (BuildContext context, int index) {
-                print('index${index}');
                 if (index == posts.length) {
                   return _buildProgressIndicator();
 
@@ -291,13 +275,6 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
                                                 (posts[index]['writer'].toString()), style: TextStyle(fontSize: 12),
                                               ),
                                               SizedBox(width:10),
-                                              Icon(Icons.comment, size: 15, color: Colors.redAccent,),
-                                              Text(
-                                                  ' ${posts[index]['comment'].toString()}', style: TextStyle(fontSize:12,color: Colors.red)),
-
-                                              SizedBox(width:10),
-                                              Icon(Icons.thumb_up, size:15, color: Colors.red,),
-                                              Text(' ${posts[index]['likes'].toString()}', style: TextStyle(fontSize :12, color: Colors.red))
 
                                             ],
                                           ),
@@ -314,17 +291,7 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: const EdgeInsets.all(4.0),
-                              padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.blueAccent,
-                                border: Border.all(width: 1.0, color: Colors.white),
-                              ),
-                              child: Text(posts[index]['type'],
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                            )
+
                           ],
                         ),
                       ),

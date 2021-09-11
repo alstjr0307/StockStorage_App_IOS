@@ -14,8 +14,9 @@ description: A new Flutter project.
 #
 # This version is used _only_ for the Runner app, which is used if you just do
 # a `flutter run` or a `flutter make-host-app-editable`. It has no impact
-# on any other native host app that you embed your Flutter project into.
-version: 1.0.0+1
+# on any other nativeost app that you embed your Flutter project into.
+version: 3.0+6
+
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -25,11 +26,6 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   firebase_messaging: ^10.0.3
   flex_color_scheme: ^3.0.1
@@ -45,7 +41,14 @@ dependencies:
   dio: ^4.0.0
   get: ^3.24.0
   back_button_interceptor: ^5.0.0
-  shared_preferences: ^2.0.6
+  firebase_analytics: ^8.2.0
+  shared_preferences: ^2.0.5
+  kakao_flutter_sdk: ^0.6.3
+  url_launcher: ^6.0.9
+  flutter_dropdown_alert: ^1.0.2
+  flutter_native_splash: ^1.2.1
+  html_editor_enhanced: ^2.0.0
+  flutter_colorpicker: ^0.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -61,6 +64,9 @@ flutter:
     - assets/KStock.json
     - assets/images/unnamed.png
     - assets/images/aa.png
+    - assets/images/bell.png
+    - assets/images/banner.png
+    - assets/images/title.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

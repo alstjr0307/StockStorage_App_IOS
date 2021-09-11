@@ -13,6 +13,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
+import 'HomePage.dart';
+
 class Recommend extends StatefulWidget {
   @override
   _RecommendState createState() => _RecommendState();
@@ -42,15 +44,21 @@ class _RecommendState extends State<Recommend> {
     var json = jsonDecode(data);
     setState(() {
       for (Map stock in json) {
-        items.add({'name': stock['name']});
+        items.add(stock['name']);
       }
     });
     return items;
   }
+  Future recommendlog() async {
+    await analytics.setCurrentScreen(
+      screenName: '추천주기록',
 
+    );
+  } //앱
   @override
   void initState() {
     super.initState();
+    recommendlog();
     if (DateTime.now().toString().substring(5, 6) == '0') {
       monthController.text = DateTime.now().toString().substring(0, 4) +
           '년 ' +
@@ -84,6 +92,7 @@ class _RecommendState extends State<Recommend> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Color.fromRGBO(240, 175, 142,100),
           automaticallyImplyLeading: false,
           backwardsCompatibility: false,
           toolbarHeight: 110,
@@ -96,7 +105,7 @@ class _RecommendState extends State<Recommend> {
                   style: TextStyle(
                       fontFamily: 'Strong',
                       fontWeight: FontWeight.bold,
-                      color: FlexColor.materialLightBackground),
+                      color: Colors.black),
                 ),
               ),
               _DateSelect(),
@@ -128,8 +137,11 @@ class _RecommendState extends State<Recommend> {
             child: Icon(Icons.add),
           ),
         ]),
-        body: Column(
-          children: [_List()],
+        body: Container(
+          color: Color.fromRGBO(240, 175, 142,100),
+          child: Column(
+            children: [_List()],
+          ),
         ));
   }
 
@@ -177,7 +189,7 @@ class _RecommendState extends State<Recommend> {
                   fillColor: FlexColor.lightSurface,
                   hintText: '월 선택',
                   contentPadding:
-                      const EdgeInsets.only(left: 14.0, bottom: 1.0, top: 1.0),
+                  const EdgeInsets.only(left: 14.0, bottom: 1.0, top: 1.0),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.circular(25.7),
@@ -331,15 +343,12 @@ class _RecommendState extends State<Recommend> {
             children: [
               Expanded(
                 child: CustomSearchableDropDown(
-                  label: 'Select Name',
+                  label: '클릭하여 종목선택',
                   items: items,
-                  dropDownMenuItems: items?.map((item) {
-                    return item['name'];
-                  })?.toList() ??
-                      [],
+                  dropDownMenuItems: items,
 
                   onChanged: (value) {
-                    selectedItems = value['name'];
+                    selectedItems = value;
                   },
 
                 ),
@@ -442,7 +451,7 @@ class _RecommendState extends State<Recommend> {
                     if (whyController.text == "") {
                       why = "생략";
                     }
-                    print('초기');
+
                     var newset = {
                       "매수추천가": priceController.text,
                       "종목": selectedItems,
@@ -458,11 +467,10 @@ class _RecommendState extends State<Recommend> {
                       try {
                         set = ds[date];
                       } catch (e) {
-                        print('에러뜸');
+
                       }
                     });
-                    print('입력할때' + set.toString());
-                    print('입력');
+
                     set.add(newset);
 
                     await firestore
@@ -548,11 +556,11 @@ class _RecommendState extends State<Recommend> {
           final data = snapshot.requireData.data();
           var keyss = data!.keys
               .where((k) =>
-                  k.substring(6, 7) == monthController.text.substring(6, 7) &&
-                      k.substring(0, 4) ==
-                          monthController.text.substring(0, 4) ||
-                  k.substring(5, 7) == monthController.text.substring(6, 8) &&
-                      k.substring(0, 4) == monthController.text.substring(0, 4))
+          k.substring(6, 7) == monthController.text.substring(6, 7) &&
+              k.substring(0, 4) ==
+                  monthController.text.substring(0, 4) ||
+              k.substring(5, 7) == monthController.text.substring(6, 8) &&
+                  k.substring(0, 4) == monthController.text.substring(0, 4))
               .toList();
           keyss.sort();
           return Flexible(
@@ -560,6 +568,7 @@ class _RecommendState extends State<Recommend> {
               children: [
                 for (var index in keyss)
                   Container(
+
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -573,13 +582,13 @@ class _RecommendState extends State<Recommend> {
                             child: Text(
                               index.replaceRange(0, 8, '') + '일',
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: FlexColor.amberDarkPrimary),
+                                color: Color.fromRGBO(96, 97, 179, 1)),
                             padding: EdgeInsets.all(10),
                           ),
                         ),
@@ -591,7 +600,7 @@ class _RecommendState extends State<Recommend> {
                                 for (var i in data[index])
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                    const EdgeInsets.fromLTRB(0, 0, 0, 10),
                                     child: InkWell(
                                       onLongPress: () {
                                         showDialog(
@@ -612,36 +621,36 @@ class _RecommendState extends State<Recommend> {
                                                   child: Text('네'),
                                                   onPressed:
                                                       () async {
-                                                        List set = data[index];
-                                                        set.remove(i);
-                                                        print(set);
-                                                        if (set.isNotEmpty)
-                                                          {
-                                                          await FirebaseFirestore
-                                                              .instance
-                                                              .collection(_auth
-                                                              .currentUser!
-                                                              .uid)
-                                                              .doc(
-                                                              '추천주 기록')
-                                                              .update({
-                                                            index: set
-                                                          });
-                                                      }
-                                                    else {
-                                                      print('a');
+                                                    List set = data[index];
+                                                    set.remove(i);
+
+                                                    if (set.isNotEmpty)
+                                                    {
                                                       await FirebaseFirestore
-                                                              .instance
-                                                              .collection(_auth
-                                                              .currentUser!
-                                                              .uid)
-                                                              .doc(
-                                                              '추천주 기록')
-                                                              .update({
-                                                            index: FieldValue
-                                                                .delete()
-                                                          });
-                                                        }
+                                                          .instance
+                                                          .collection(_auth
+                                                          .currentUser!
+                                                          .uid)
+                                                          .doc(
+                                                          '추천주 기록')
+                                                          .update({
+                                                        index: set
+                                                      });
+                                                    }
+                                                    else {
+
+                                                      await FirebaseFirestore
+                                                          .instance
+                                                          .collection(_auth
+                                                          .currentUser!
+                                                          .uid)
+                                                          .doc(
+                                                          '추천주 기록')
+                                                          .update({
+                                                        index: FieldValue
+                                                            .delete()
+                                                      });
+                                                    }
                                                     Navigator.pop(context);
                                                   },
                                                 ),
@@ -656,15 +665,15 @@ class _RecommendState extends State<Recommend> {
                                         child: Container(
                                           child: Card(
                                             color:
-                                                Color.fromRGBO(225, 248, 220, 10),
+                                            Color.fromRGBO(255,236,227,1),
                                             child: Padding(
                                               padding: const EdgeInsets.all(7.0),
                                               child: Column(
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                        const EdgeInsets.fromLTRB(
-                                                            0, 0, 0, 8),
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 0, 0, 8),
                                                     child: Row(
                                                       children: [
                                                         Text('종목: '),
@@ -687,14 +696,14 @@ class _RecommendState extends State<Recommend> {
                                                               fontFamily:
                                                               'Strong',
                                                               color: Colors
-                                                                  .blueAccent,
-                                                              fontSize: 20)),
+                                                                  .black,
+                                                              fontSize: 15)),
                                                     ],
                                                   ),
                                                   Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                     children: [
                                                       Row(
                                                         children: [
@@ -702,10 +711,9 @@ class _RecommendState extends State<Recommend> {
                                                           Text(
                                                             i['매수추천가'],
                                                             style: TextStyle(
-                                                                fontFamily:
-                                                                'Strong',
+
                                                                 color: Colors.red,
-                                                                fontSize: 20),
+                                                                fontSize: 15),
                                                           ),
                                                         ],
                                                       ),
@@ -715,10 +723,9 @@ class _RecommendState extends State<Recommend> {
                                                           Text(
                                                             i['손절가'],
                                                             style: TextStyle(
-                                                                fontFamily:
-                                                                    'Strong',
+
                                                                 color: Colors.red,
-                                                                fontSize: 20),
+                                                                fontSize: 15),
                                                           )
                                                         ],
                                                       ),
@@ -731,7 +738,7 @@ class _RecommendState extends State<Recommend> {
                                                       child: Container(
                                                         width: 500,
                                                         padding:
-                                                            EdgeInsets.all(10),
+                                                        EdgeInsets.all(10),
                                                         child: Text(
                                                           i['기타'].replaceAll("\\n", "\n"),
                                                           maxLines: 40,
@@ -763,9 +770,9 @@ class _RecommendState extends State<Recommend> {
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(
-                      color: Colors.black,
-                      width: 3,
-                    ))),
+                              color: Colors.black,
+                              width: 3,
+                            ))),
                   ),
               ],
             ),

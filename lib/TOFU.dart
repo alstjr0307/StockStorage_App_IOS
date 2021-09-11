@@ -13,6 +13,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
+import 'HomePage.dart';
+
 class Tofu extends StatefulWidget {
   @override
   _TofuState createState() => _TofuState();
@@ -46,10 +48,15 @@ class _TofuState extends State<Tofu> {
     });
     return items;
   }
-
+  Future tofulog() async {
+    await analytics.setCurrentScreen(
+      screenName: '추천주제공',
+    );
+  } //앱
   @override
   void initState() {
     super.initState();
+    tofulog();
     if (DateTime.now().toString().substring(5, 6) == '0') {
       monthController.text = DateTime.now().toString().substring(0, 4) +
           '년 ' +
@@ -79,6 +86,7 @@ class _TofuState extends State<Tofu> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Color.fromRGBO(240, 175, 142,100),
           automaticallyImplyLeading: false,
           backwardsCompatibility: false,
           toolbarHeight: 110,
@@ -91,7 +99,7 @@ class _TofuState extends State<Tofu> {
                   style: TextStyle(
                       fontFamily: 'Strong',
                       fontWeight: FontWeight.bold,
-                      color: FlexColor.materialLightBackground),
+                      color: Colors.black),
                 ),
               ),
               _DateSelect(),
@@ -104,11 +112,14 @@ class _TofuState extends State<Tofu> {
             onTap: () {
               Navigator.pop(context);
             },
-    ),
+          ),
         ],
         ),
-        body: Column(
-          children: [_List()],
+        body: Container(
+          color: Color.fromRGBO(240, 175, 142,100),
+          child: Column(
+            children: [_List()],
+          ),
         ));
   }
 
@@ -278,13 +289,13 @@ class _TofuState extends State<Tofu> {
                             child: Text(
                               index.replaceRange(0, 8, '') + '일',
                               style: TextStyle(
-                                  color: Colors.black,
+                                  color: Colors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),
                             ),
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: FlexColor.amberDarkPrimary),
+                                color: Color.fromRGBO(96, 97, 179, 1)),
                             padding: EdgeInsets.all(10),
                           ),
                         ),
@@ -302,7 +313,7 @@ class _TofuState extends State<Tofu> {
                                       child: Container(
                                         child: Card(
                                           color:
-                                          Color.fromRGBO(225, 248, 220, 10),
+                                          Color.fromRGBO(255,236,227,1),
                                           child: Padding(
                                             padding: const EdgeInsets.all(7.0),
                                             child: Column(

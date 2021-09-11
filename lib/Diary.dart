@@ -13,13 +13,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
+import 'HomePage.dart';
+
 class Diary extends StatefulWidget {
   @override
   _DiaryState createState() => _DiaryState();
 }
 
 class _DiaryState extends State<Diary> {
-  final _formKey = GlobalKey<FormState>();
   bool asTabs = false;
   late String selectedValue;
 
@@ -42,15 +43,23 @@ class _DiaryState extends State<Diary> {
     var json = jsonDecode(data);
     setState(() {
       for (Map stock in json) {
-        items.add({'name': stock['name']});
+        items.add(stock['name']);
       }
     });
     return items;
   }
 
+  Future diarylog() async {
+    await analytics.setCurrentScreen(
+      screenName: '매매일지',
+      screenClassOverride: 'diary',
+    );
+  } //앱
+
   @override
   void initState() {
     super.initState();
+    diarylog();
     if (DateTime.now().toString().substring(5, 6) == '0') {
       monthController.text = DateTime.now().toString().substring(0, 4) +
           '년 ' +
@@ -79,8 +88,6 @@ class _DiaryState extends State<Diary> {
     super.dispose();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +95,7 @@ class _DiaryState extends State<Diary> {
           automaticallyImplyLeading: false,
           backwardsCompatibility: false,
           toolbarHeight: 110,
+          backgroundColor: Color.fromRGBO(240, 175, 142, 100),
           title: Column(
             children: [
               Padding(
@@ -97,7 +105,7 @@ class _DiaryState extends State<Diary> {
                   style: TextStyle(
                       fontFamily: 'Strong',
                       fontWeight: FontWeight.bold,
-                      color: FlexColor.materialLightBackground),
+                      color: Colors.black),
                 ),
               ),
               _DateSelect(),
@@ -116,8 +124,7 @@ class _DiaryState extends State<Diary> {
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return StatefulBuilder(
-                    builder: (context, setState) {
+                    return StatefulBuilder(builder: (context, setState) {
                       return AlertDialog(
                         content: Stack(
                           overflow: Overflow.visible,
@@ -125,18 +132,18 @@ class _DiaryState extends State<Diary> {
                             _InputWidget('삭제'),
                           ],
                         ),
-
                       );
-
-                    }
-                    );
+                    });
                   });
             },
             child: Icon(Icons.add),
           ),
         ]),
-        body: Column(
-          children: [_List()],
+        body: Container(
+          color: Color.fromRGBO(240, 175, 142, 100),
+          child: Column(
+            children: [_List()],
+          ),
         ));
   }
 
@@ -261,309 +268,293 @@ class _DiaryState extends State<Diary> {
     content: Text("잠시만 기다려주세요 "),
   );
   var type;
+
   Widget _InputWidget(String n) {
-
     return SingleChildScrollView(
-      child: StatefulBuilder(
-          builder: (context ,setState) {
-            return Column(
+      child: StatefulBuilder(builder: (context, setState) {
+        return Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      child: Text('날짜'),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: TextField(
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                          readOnly: true,
-                          controller: dateController,
-                          decoration: InputDecoration(
-
-                            hintText: '날짜',
-                            contentPadding: const EdgeInsets.only(
-                                left: 10.0, bottom: 1.0, top: 1.0),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.red),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                          onTap: () async {
-                            var date = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1900),
-                              lastDate: DateTime(2100),
-                              locale: Locale("ko", "KR"),
-                            );
-                            dateController.text = date.toString().substring(
-                                0, 10);
-                          },
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      child: Text('종목'),
-                    ),
-                    Expanded(
-                      child: CustomSearchableDropDown(
-                        label: '클릭하여 종목 선택',
-                        items: items,
-                        dropDownMenuItems: items.map((item) {
-                          return item['name'];
-                        })?.toList() ??
-                            [],
-
-                        onChanged: (value) {
-                          selectedItems = value['name'].toString();
-                        },
-
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        child: Text('매매종류'),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 100,
-                        child: DropdownButton(
-                          hint: type == null
-                              ? Text('선택')
-                              : Text(
-                            type,
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          isExpanded: true,
-                          iconSize: 30.0,
-                          style: TextStyle(color: Colors.blue),
-                          items: ['매수', '매도'].map(
-                                (val) {
-                              return DropdownMenuItem<String>(
-                                value: val,
-                                child: Text(val),
-                              );
-                            },
-                          ).toList(),
-                          onChanged: (val) {
-                            setState(
-                                  () {
-                                type = val;
-                                print(type);
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                        controller: priceController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: '단가',
-                          contentPadding: const EdgeInsets.only(
-                              left: 14.0, bottom: 1.0, top: 1.0),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 100,
-                      child: TextField(
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                        controller: countController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: '수량',
-                          contentPadding: const EdgeInsets.only(
-                              left: 14.0, bottom: 1.0, top: 1.0),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 50),
                 Container(
-                  width: 500,
-
+                  child: Text('날짜'),
+                ),
+                Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                     child: TextField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      controller: whyController,
-                      decoration: InputDecoration(
-                        hintText: '매수/매도 이유',
-                        contentPadding: const EdgeInsets.only(
-                            left: 14.0, bottom: 1.0, top: 1.0),
-
+                      style: TextStyle(
+                        color: Colors.black,
                       ),
+                      readOnly: true,
+                      controller: dateController,
+                      decoration: InputDecoration(
+                        hintText: '날짜',
+                        contentPadding: const EdgeInsets.only(
+                            left: 10.0, bottom: 1.0, top: 1.0),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      onTap: () async {
+                        var date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime(2100),
+                          locale: Locale("ko", "KR"),
+                        );
+                        dateController.text = date.toString().substring(0, 10);
+                      },
+                      textAlign: TextAlign.center,
                     ),
+                  ),
+                ),
+              ],
+            ),
+            if (n == '삭제')
+              Row(
+                children: [
+                  Container(
+                    child: Text('종목'),
+                  ),
+                  Expanded(
+                    child: CustomSearchableDropDown(
+                      label: '클릭하여 종목 선택',
+                      items: items,
+                      dropDownMenuItems: items,
+                      onChanged: (value) {
+                        selectedItems = value;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    child: Text('매매종류'),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    child: new TextButton(
-                      autofocus: false,
-                      onPressed: () async {
-                        if (selectedItems != null &&
-                            dateController.text.isNotEmpty &&
-                            countController.text.isNotEmpty &&
-                            priceController.text.isNotEmpty) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return alert;
-                              });
-
-                          var date = dateController.text;
-                          bool typee;
-                          if (type == "매수") {
-                            typee = true;
-                          } else {
-                            typee = false;
-                          }
-                          var set = {};
-                          var why = whyController.text;
-                          if (whyController.text == "") {
-                            why = "생략";
-                          }
-                          print('초기');
-                          var newset = {
-                            "단가": priceController.text,
-                            "매매": type,
-                            "이유": why,
-                            "수량": countController.text
-                          };
-                          await firestore
-                              .collection(_auth.currentUser!.uid)
-                              .doc('매매일지')
-                              .get()
-                              .then((DocumentSnapshot ds) {
-                            try {
-                              set = ds[date];
-                            } catch (e) {
-                              print('에러뜸');
-                            }
-                          });
-                          print('입력할때' + set.toString());
-                          print('입력');
-                          if (n == '삭제') {
-                            if (set.containsKey(selectedItems)) {
-                              var number = set[selectedItems].keys.toList().length;
-                              var addition = number + 1;
-                              set[selectedItems][addition.toString()] = newset;
-                            } else {
-                              print(set);
-                              set[selectedItems] = {'1': newset};
-                              print(set);
-                            }
-                            await firestore
-                                .collection(_auth.currentUser!.uid)
-                                .doc('매매일지')
-                                .update({date: set});
-                          } else {
-                            set[selectedItems][n.toString()] = newset;
-                            await firestore
-                                .collection(_auth.currentUser!.uid)
-                                .doc('매매일지')
-                                .update({date: set});
-                          }
-
-                          countController.clear();
-                          priceController.clear();
-                          whyController.clear();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        }  else {
-                          Navigator.pop(context);
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text('내용이 비어있습니다'),
-                                  content: Text('값을 입력해주세요'),
-                                  actions: [
-                                    FlatButton(
-                                        onPressed: () {
-                                          Navigator.pop(context, "ok");
-                                          showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  content: Stack(
-                                                    overflow: Overflow.visible,
-                                                    children: <Widget>[
-                                                      SingleChildScrollView(
-                                                          child: _InputWidget('삭')),
-                                                    ],
-                                                  ),
-
-                                                );
-                                              });
-                                        },
-                                        child: Text('확인'))
-                                  ],
-                                );
-                              });
-                        }
+                    width: 100,
+                    child: DropdownButton(
+                      hint: type == null
+                          ? Text('선택')
+                          : Text(
+                              type,
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                      isExpanded: true,
+                      iconSize: 30.0,
+                      style: TextStyle(color: Colors.blue),
+                      items: ['매수', '매도'].map(
+                        (val) {
+                          return DropdownMenuItem<String>(
+                            value: val,
+                            child: Text(val),
+                          );
+                        },
+                      ).toList(),
+                      onChanged: (val) {
+                        setState(
+                          () {
+                            type = val;
+                          },
+                        );
                       },
-                      style: TextButton.styleFrom(
-                          primary: Colors.white, backgroundColor: Colors.red),
-                      child: Text('입력'),
                     ),
                   ),
                 ),
               ],
-            );
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                    controller: priceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: '단가',
+                      contentPadding: const EdgeInsets.only(
+                          left: 14.0, bottom: 1.0, top: 1.0),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 100,
+                  child: TextField(
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                    controller: countController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: '수량',
+                      contentPadding: const EdgeInsets.only(
+                          left: 14.0, bottom: 1.0, top: 1.0),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 50),
+            Container(
+              width: 500,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  controller: whyController,
+                  decoration: InputDecoration(
+                    hintText: '매수/매도 이유',
+                    contentPadding: const EdgeInsets.only(
+                        left: 14.0, bottom: 1.0, top: 1.0),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                child: new TextButton(
+                  autofocus: false,
+                  onPressed: () async {
+                    if (selectedItems != null &&
+                        dateController.text.isNotEmpty &&
+                        countController.text.isNotEmpty &&
+                        priceController.text.isNotEmpty) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return alert;
+                          });
 
-          }
-      ),
+                      var date = dateController.text;
+                      bool typee;
+                      if (type == "매수") {
+                        typee = true;
+                      } else {
+                        typee = false;
+                      }
+                      var set = {};
+                      var why = whyController.text;
+                      if (whyController.text == "") {
+                        why = "생략";
+                      }
+
+                      var newset = {
+                        "단가": priceController.text,
+                        "매매": type,
+                        "이유": why,
+                        "수량": countController.text
+                      };
+                      await firestore
+                          .collection(_auth.currentUser!.uid)
+                          .doc('매매일지')
+                          .get()
+                          .then((DocumentSnapshot ds) {
+                        try {
+                          set = ds[date];
+                        } catch (e) {}
+                      });
+
+                      if (n == '삭제') {
+                        if (set.containsKey(selectedItems)) {
+                          var number = set[selectedItems].keys.toList().length;
+                          var addition = number + 1;
+                          set[selectedItems][addition.toString()] = newset;
+                        } else {
+                          set[selectedItems] = {'1': newset};
+                        }
+                        await firestore
+                            .collection(_auth.currentUser!.uid)
+                            .doc('매매일지')
+                            .update({date: set});
+                      } else {
+                        set[selectedItems][n.toString()] = newset;
+                        await firestore
+                            .collection(_auth.currentUser!.uid)
+                            .doc('매매일지')
+                            .update({date: set});
+                      }
+
+                      countController.clear();
+                      priceController.clear();
+                      whyController.clear();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pop(context);
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('내용이 비어있습니다'),
+                              content: Text('값을 입력해주세요'),
+                              actions: [
+                                FlatButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, "ok");
+                                      if (n == '삭제')
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                content: Stack(
+                                                  overflow: Overflow.visible,
+                                                  children: <Widget>[
+                                                    SingleChildScrollView(
+                                                        child:
+                                                            _InputWidget('삭제')),
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                    },
+                                    child: Text('확인'))
+                              ],
+                            );
+                          });
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                      primary: Colors.white, backgroundColor: Colors.red),
+                  child: Text('입력'),
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 
@@ -621,13 +612,14 @@ class _DiaryState extends State<Diary> {
                           child: Text(
                             index.replaceRange(0, 8, '') + '일',
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: FlexColor.amberDarkPrimary),
+                            shape: BoxShape.circle,
+                            color: Color.fromRGBO(96, 97, 179, 1),
+                          ),
                           padding: EdgeInsets.all(10),
                         ),
                       ),
@@ -663,11 +655,10 @@ class _DiaryState extends State<Diary> {
                                               i,
                                               style: TextStyle(
                                                   color: Colors.white,
-                                                  fontFamily: 'Strong',
+                                                  fontFamily: 'Hanma',
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold),
                                             ),
-
                                           ),
                                           Column(
                                             children: [
@@ -675,10 +666,14 @@ class _DiaryState extends State<Diary> {
                                                 GestureDetector(
                                                   onTapDown:
                                                       (TapDownDetails details) {
-                                                    double left = details.globalPosition.dx;
-                                                    double top = details.globalPosition.dy;
+                                                    double left = details
+                                                        .globalPosition.dx;
+                                                    double top = details
+                                                        .globalPosition.dy;
                                                     showMenu(
-                                                      position: RelativeRect.fromLTRB(left, top, 0, 0),
+                                                      position:
+                                                          RelativeRect.fromLTRB(
+                                                              left, top, 0, 0),
                                                       context: context,
                                                       items: [
                                                         PopupMenuItem(
@@ -693,9 +688,8 @@ class _DiaryState extends State<Diary> {
                                                       elevation: 8.0,
                                                     ).then((value) {
 // NOTE: even you didnt select item this method will be called with null of value so you should call your call back with checking if value is not null
-                                                      if (value != null)
-                                                        print(value);
-                                                      if (value == 1)
+                                                      if (value !=
+                                                          null) if (value == 1)
                                                         showDialog(
                                                             context: context,
                                                             builder: (context) {
@@ -719,87 +713,77 @@ class _DiaryState extends State<Diary> {
                                                                     onPressed:
                                                                         () async {
                                                                       Map<String,
-                                                                          dynamic>
-                                                                      update =
-                                                                      data[
-                                                                      index];
-                                                                      print('j' +
-                                                                          j);
-                                                                      print('update' +
-                                                                          update
-                                                                              .toString());
+                                                                              dynamic>
+                                                                          update =
+                                                                          data[
+                                                                              index];
+
                                                                       update[i].removeWhere((key,
-                                                                          value) =>
-                                                                      key ==
+                                                                              value) =>
+                                                                          key ==
                                                                           j);
                                                                       var keylist = update[
-                                                                      i]
+                                                                              i]
                                                                           .keys
                                                                           .toList();
                                                                       var newmap =
-                                                                      {};
+                                                                          {};
                                                                       var cou =
-                                                                      1;
+                                                                          1;
 
                                                                       for (var k
-                                                                      in keylist) {
+                                                                          in keylist) {
                                                                         newmap[cou
                                                                             .toString()] = update[
-                                                                        i]
-                                                                        [k];
+                                                                                i]
+                                                                            [k];
                                                                         cou++;
                                                                       }
-                                                                      print('newmap ' +
-                                                                          newmap
-                                                                              .toString());
+
                                                                       update[i] =
                                                                           newmap;
-                                                                      print('업뎃' +
-                                                                          update
-                                                                              .toString());
+
                                                                       if (newmap.toString() ==
-                                                                          '{}' &&
+                                                                              '{}' &&
                                                                           update.keys.toList().length ==
                                                                               1)
                                                                         await FirebaseFirestore
                                                                             .instance
                                                                             .collection(_auth
-                                                                            .currentUser!.uid)
+                                                                                .currentUser!.uid)
                                                                             .doc(
-                                                                            '매매일지')
+                                                                                '매매일지')
                                                                             .update({
                                                                           index:
-                                                                          FieldValue.delete()
+                                                                              FieldValue.delete()
                                                                         });
                                                                       else if (newmap
-                                                                          .toString() !=
+                                                                              .toString() !=
                                                                           '{}') {
-                                                                        print(
-                                                                            update);
                                                                         await FirebaseFirestore
                                                                             .instance
                                                                             .collection(_auth
-                                                                            .currentUser!.uid)
+                                                                                .currentUser!.uid)
                                                                             .doc(
-                                                                            '매매일지')
+                                                                                '매매일지')
                                                                             .update({
                                                                           index:
-                                                                          update
+                                                                              update
                                                                         });
                                                                       } else {
                                                                         update.removeWhere((key,
-                                                                            value) =>
-                                                                        key ==
+                                                                                value) =>
+                                                                            key ==
                                                                             i);
                                                                         await FirebaseFirestore
                                                                             .instance
                                                                             .collection(_auth
-                                                                            .currentUser!.uid)
+                                                                                .currentUser!.uid)
                                                                             .doc(
-                                                                            '매매일지')
+                                                                                '매매일지')
                                                                             .update({
                                                                           index:
-                                                                          update
+                                                                              update
                                                                         });
                                                                       }
                                                                       Navigator.pop(
@@ -814,47 +798,44 @@ class _DiaryState extends State<Diary> {
                                                         dateController.text =
                                                             index;
                                                         priceController.text =
-                                                        data[index][i][j]
-                                                        ['단가'];
+                                                            data[index][i][j]
+                                                                ['단가'];
                                                         countController.text =
-                                                        data[index][i][j]
-                                                        ['수량'];
-                                                        type =
-                                                        data[index][i][j]
-                                                        ['매매'];
+                                                            data[index][i][j]
+                                                                ['수량'];
+                                                        type = data[index][i][j]
+                                                            ['매매'];
 
                                                         whyController.text =
-                                                        data[index][i][j]
-                                                        ['이유'];
+                                                            data[index][i][j]
+                                                                ['이유'];
                                                         showDialog(
                                                             context: context,
                                                             builder:
                                                                 (BuildContext
-                                                            context) {
+                                                                    context) {
                                                               return StatefulBuilder(
                                                                   builder: (context,
                                                                       setState) {
-                                                                    return AlertDialog(
-                                                                      content:
+                                                                return AlertDialog(
+                                                                  content:
                                                                       Stack(
-                                                                        overflow:
+                                                                    overflow:
                                                                         Overflow
                                                                             .visible,
-                                                                        children: <
-                                                                            Widget>[
-                                                                          _InputWidget(
-                                                                              j),
-                                                                        ],
-                                                                      ),
-                                                                    );
-                                                                  });
+                                                                    children: <
+                                                                        Widget>[
+                                                                      _InputWidget(
+                                                                          j),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              });
                                                             });
                                                       }
                                                     });
                                                   },
                                                   child: Container(
-
-
                                                     child: Card(
                                                       color: getMyColor(
                                                         (data[index][i][j]
@@ -867,115 +848,106 @@ class _DiaryState extends State<Diary> {
                                                         child: Column(
                                                           children: [
                                                             Container(
-                                                              padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                                                              width:200,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                          0,
+                                                                          0,
+                                                                          0,
+                                                                          5),
+                                                              width: 200,
                                                               child: Row(
-                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
                                                                 children: [
-                                                                  if (data[index][
-                                                                              i][j]
+                                                                  if (data[index][i]
+                                                                              [
+                                                                              j]
                                                                           [
                                                                           '매매'] ==
                                                                       "매수")
                                                                     Container(
-                                                                      child: Row(
+                                                                      child:
+                                                                          Row(
                                                                         children: [
                                                                           Text(
                                                                             '매수단가: ',
-                                                                            style: TextStyle(
-                                                                                fontSize:
-                                                                                    14),
+                                                                            style:
+                                                                                TextStyle(fontSize: 14),
                                                                           ),
                                                                           Text(
-                                                                            data[index][i][j]
-                                                                            [
-                                                                            '단가']
-                                                                                .toString() +
+                                                                            data[index][i][j]['단가'].toString() +
                                                                                 '원',
                                                                             style: TextStyle(
-                                                                                fontWeight:
-                                                                                FontWeight
-                                                                                    .bold,
-                                                                                fontFamily:
-                                                                                'Strong',
-                                                                                fontSize:
-                                                                                14),
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontFamily: 'Hanma',
+                                                                                fontSize: 14),
                                                                           ),
                                                                         ],
                                                                       ),
                                                                     ),
-                                                                  if (data[index][
-                                                                              i][j]
+                                                                  if (data[index][i]
+                                                                              [
+                                                                              j]
                                                                           [
-                                                                          '매매'] !="매수")
+                                                                          '매매'] !=
+                                                                      "매수")
                                                                     Container(
-                                                                      child: Row(
+                                                                      child:
+                                                                          Row(
                                                                         children: [
-                                                                          Text('매도단가: ',
-                                                                              style: TextStyle(
-                                                                                  fontSize:
-                                                                                      14)),
                                                                           Text(
-                                                                            data[index][i][j]
-                                                                            [
-                                                                            '단가']
-                                                                                .toString() +
+                                                                              '매도단가: ',
+                                                                              style: TextStyle(fontSize: 14)),
+                                                                          Text(
+                                                                            data[index][i][j]['단가'].toString() +
                                                                                 '원',
                                                                             style: TextStyle(
-                                                                                fontWeight:
-                                                                                FontWeight
-                                                                                    .bold,
-                                                                                fontFamily:
-                                                                                'Strong',
-                                                                                fontSize:
-                                                                                14),
+                                                                                fontWeight: FontWeight.bold,
+                                                                                fontFamily: 'Strong',
+                                                                                fontSize: 14),
                                                                           ),
                                                                         ],
                                                                       ),
                                                                     ),
-
-
                                                                   Row(
                                                                     children: [
-                                                                      Text('수량: ',
-                                                                          style: TextStyle(
-                                                                              fontSize:
-                                                                                  14)),
                                                                       Text(
-                                                                          data[index][i][j]
-                                                                          [
-                                                                          '수량'] +
+                                                                          '수량: ',
+                                                                          style:
+                                                                              TextStyle(fontSize: 14)),
+                                                                      Text(
+                                                                          data[index][i][j]['수량'] +
                                                                               '주',
                                                                           style: TextStyle(
-                                                                              fontSize:
-                                                                              14,
-                                                                              fontFamily:
-                                                                              'Strong',
-                                                                              fontWeight:
-                                                                              FontWeight.bold)),
+                                                                              fontSize: 14,
+                                                                              fontFamily: 'Strong',
+                                                                              fontWeight: FontWeight.bold)),
                                                                     ],
                                                                   ),
-
-
                                                                 ],
                                                               ),
                                                             ),
                                                             Text(
                                                               '총 ' +
-                                                                  (int.parse(data[index][i][j]['수량']) *
-                                                                      int.parse(data[index][i][j]['단가']))
+                                                                  (int.parse(data[index][i][j]
+                                                                              [
+                                                                              '수량']) *
+                                                                          int.parse(data[index][i][j]
+                                                                              [
+                                                                              '단가']))
                                                                       .toString() +
                                                                   '원',
                                                               style: TextStyle(
-                                                                  fontSize:
-                                                                  14,
+                                                                  fontSize: 14,
                                                                   color: Colors
                                                                       .black,
                                                                   fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                                      FontWeight
+                                                                          .bold,
                                                                   fontFamily:
-                                                                  'Strong'),
+                                                                      'Strong'),
                                                             ),
                                                             Container(
                                                               child: Card(
@@ -984,14 +956,16 @@ class _DiaryState extends State<Diary> {
                                                                     Container(
                                                                   width: 200,
                                                                   padding:
-                                                                      EdgeInsets.all(
-                                                                          10),
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              10),
                                                                   child: Text(
-                                                                    data[index][i]
+                                                                    data[index][i][j]
                                                                             [
-                                                                            j]
-                                                                        [
-                                                                        '이유'].replaceAll("\\n", "\n"),
+                                                                            '이유']
+                                                                        .replaceAll(
+                                                                            "\\n",
+                                                                            "\n"),
                                                                     maxLines:
                                                                         40,
                                                                     overflow:
