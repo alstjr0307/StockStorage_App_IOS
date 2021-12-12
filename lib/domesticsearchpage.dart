@@ -32,13 +32,15 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(240, 175, 142,100),
-          iconTheme: IconThemeData(color:Colors.black),
+          backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
           title: Text((() {
-          if (widget.category =='f'){
-            return '주식 토론방 검색';}
-          return '주식정보방 검색';
-        })(),style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),),
+            if (widget.category =='f'){
+              return '주식 토론방 검색';}
+            return '주식정보방 검색';
+          })(),style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
         ),
         body: Column(
           children: [
@@ -53,6 +55,7 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
       children: [
         new Flexible(
           child: TextField(
+
             autofocus: true,
             controller: searchController,
             style: new TextStyle(
@@ -60,9 +63,11 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
             ),
             decoration: new InputDecoration(
 
-                prefixIcon: new Icon(Icons.search, color: Colors.blue),
+                prefixIcon: new Icon(Icons.search, color: Colors.green),
                 hintText: '검색어를 입력해주세요',
-                hintStyle: new TextStyle(color: Colors.blue)),
+                hintStyle: new TextStyle(color: Colors.green),
+                fillColor: Colors.white),
+
           ),
         ),
         Container(
@@ -70,21 +75,21 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
           child: DropdownButton(
             hint: Text(
               searchOption,
-              style: TextStyle(color: Colors.blue),
+              style: TextStyle(color: Colors.green),
             ),
             iconSize: 30.0,
             style: TextStyle(color: Colors.blue),
             items: ['제목', '내용', '제목+내용'].map(
-              (val) {
+                  (val) {
                 return DropdownMenuItem<String>(
                   value: val,
-                  child: Text(val),
+                  child: Text(val, style: TextStyle(color: Colors.green),),
                 );
               },
             ).toList(),
             onChanged: (val) {
               setState(
-                () {
+                    () {
                   searchOption = val.toString();
                 },
               );
@@ -239,15 +244,25 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
 
                 }
                 else {
-                  return Container(
-                    margin: new EdgeInsets.fromLTRB(5, 0, 5, 0),
-                    width: 25.0,
-                    height: 80.0,
-                    child: InkWell(
-                      child: Card(
-                        margin: EdgeInsets.symmetric(vertical: 2, horizontal: 0),
-                        color: Colors.white70,
-                        elevation: 5,
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0), bottom: Radius.circular(10.0)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0), //(x,y)
+                            blurRadius: 5.0,
+                          ),
+                        ],
+                      ),
+
+                      margin: new EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      width: 25.0,
+                      height: 80.0,
+                      child: InkWell(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -272,7 +287,7 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
                                             children: [
                                               Icon(Icons.person, size:15),
                                               Text(
-                                                (posts[index]['writer'].toString()), style: TextStyle(fontSize: 12),
+                                                (posts[index]['writer'].toString()), style: TextStyle(fontSize: 12, fontFamily: 'Strong'),
                                               ),
                                               SizedBox(width:10),
 
@@ -294,17 +309,17 @@ class _DomesticSearchPageState extends State<DomesticSearchPage> {
 
                           ],
                         ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => allDetail(
-                              index: posts[index]["id"],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => allDetail(
+                                index: posts[index]["id"],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   );
                 }

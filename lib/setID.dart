@@ -45,7 +45,11 @@ class _SetIDState extends State<SetID> {
     } else
       return Scaffold(
         appBar: AppBar(
-          title: Text('회원가입'),
+          backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
+          title: Text('회원가입', style:TextStyle(color: Colors.white)),
         ),
         body: SafeArea(
           child: Center(

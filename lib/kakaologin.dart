@@ -20,7 +20,6 @@ class LoginResult extends StatefulWidget {
 }
 
 class _LoginResultState extends State {
-  bool _isLoading = false;
   TextEditingController passwordController = TextEditingController();
   TextEditingController nicknameController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
@@ -36,11 +35,10 @@ class _LoginResultState extends State {
   void initState() {
     super.initState();
     checkAccount(_accountEmail);
-    print(_accountEmail);
+
   }
   String sentence = "로그인중입니다";
   checkAccount(String username) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final User user = await UserApi.instance.me();
     setState(() {
       _accountEmail = user.kakaoAccount!.email.toString();
@@ -99,7 +97,6 @@ class _KakaoRegisterState extends State<KakaoRegister> {
 
   CheckKakao() async {
     final User user = await UserApi.instance.me();
-    SharedPreferences sharedPreferences= await SharedPreferences.getInstance();
 
     setState(() {
       _accountEmail = user.kakaoAccount!.email;
@@ -114,7 +111,7 @@ class _KakaoRegisterState extends State<KakaoRegister> {
   signin(String nickname) async {
     SharedPreferences sharedPreferences= await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token");
-    print(nickname);
+
     if (nickname =='') {
       nickname='${sharedPreferences.getInt('userID')}번째가입자';
     }

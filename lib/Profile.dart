@@ -10,31 +10,29 @@ class MyProfile extends StatelessWidget {
   final dio = new Dio();
 
   Future<Map> getProfile() async {
-    print('12');
+
     var sharedPreferences = await SharedPreferences.getInstance();
-    print('13');
+
     var token = sharedPreferences.getString("token");
     var userid = sharedPreferences.getInt("userID");
-    print('2342');
-    print(token);
-    print('ww${userid.toString()}');
+
     var profileurl =
         'http://13.125.62.90/api/v1/AuthUser/${userid.toString()}/';
-    print(profileurl);
+
     final responseall = await dio.get(profileurl,
         options: Options(headers: {"Authorization": "Token ${token}"}));
-    print('exit');
+
     Map profile = responseall.data;
-    print(profile);
+
     profile['create_dt'] = DateFormat("M월dd일")
         .format(DateTime.parse(profile['date_joined']));
-    print('다함');
+
     return profile;
   }
 
   @override
   Widget build(BuildContext context) {
-    print('1');
+
     return FutureBuilder(
         future: getProfile(),
         builder: (context, snapshot) {
@@ -48,7 +46,8 @@ class MyProfile extends StatelessWidget {
                           gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
-                              colors: [Colors.deepPurple, Colors.grey])),
+                              colors: [                                      Color.fromRGBO(0, 82, 33, 1),
+                                Color.fromRGBO(185, 204, 179, 1)])),
                       child: Container(
                         width: double.infinity,
                         height: 350.0,
@@ -61,10 +60,10 @@ class MyProfile extends StatelessWidget {
                               Text(
                                 restaurant['first_name'],
                                 style: TextStyle(
-                                  fontSize: 40.0,
-                                  color: Colors.white,
-                                  fontFamily: 'Strong',
-                                  fontWeight: FontWeight.bold
+                                    fontSize: 40.0,
+                                    color: Colors.white,
+                                    fontFamily: 'Strong',
+                                    fontWeight: FontWeight.bold
 
                                 ),
                               ),
@@ -72,9 +71,9 @@ class MyProfile extends StatelessWidget {
                               Text(
                                 restaurant["create_dt"]+' 가입',
                                 style: TextStyle(
-                                    fontSize: 22.0,
+                                    fontSize: 15.0,
                                     color: Colors.white,
-                                    fontFamily: 'Strong',
+                                    fontFamily: 'Nanum',
                                     fontWeight: FontWeight.bold
 
                                 ),

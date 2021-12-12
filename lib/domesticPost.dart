@@ -32,7 +32,7 @@ class _InfoState extends State<Info> with AutomaticKeepAliveClientMixin<Info> {
   var posttype = '';
   var sharedPreferences;
   var token;
-
+  var blockid;
   Future domesticlog() async {
     await analytics.setCurrentScreen(
         screenName: widget.category, screenClassOverride: '게시판');
@@ -41,7 +41,6 @@ class _InfoState extends State<Info> with AutomaticKeepAliveClientMixin<Info> {
   @override
   void initState() {
     _getMoreData(page);
-
     super.initState();
     domesticlog();
 
@@ -68,6 +67,7 @@ class _InfoState extends State<Info> with AutomaticKeepAliveClientMixin<Info> {
     List tList = [];
 
     sharedPreferences = await SharedPreferences.getInstance();
+    blockid = sharedPreferences.getStringList('blockid');
     token = sharedPreferences.getString('token');
     if (!isLoading) {
       setState(() {
@@ -110,7 +110,7 @@ class _InfoState extends State<Info> with AutomaticKeepAliveClientMixin<Info> {
   Widget _buildList() {
     return Expanded(
       child: Container(
-        color: Color.fromRGBO(240, 175, 142, 100),
+        color: Colors.white,
         child: RefreshIndicator(
           child: ListView.builder(
               itemCount: posts.length + 1,
@@ -121,107 +121,112 @@ class _InfoState extends State<Info> with AutomaticKeepAliveClientMixin<Info> {
                 if (index == posts.length) {
                   return _buildProgressIndicator();
                 } else {
-                  return Container(
-                    margin: new EdgeInsets.fromLTRB(5, 0, 5, 0),
-                    width: 25.0,
-                    height: 80.0,
-                    child: InkWell(
-                      child: Card(
-                        margin:
-                        EdgeInsets.symmetric(vertical: 2, horizontal: 0),
-                        color: Color.fromRGBO(240, 175, 142, 0.5),
-                        elevation: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                const EdgeInsets.fromLTRB(10.0, 0, 8.0, 0),
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(),
-                                    Text(
-                                      (posts[index]['title']),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.person, size: 15),
-                                              Text(
-                                                (posts[index]['writer']
-                                                    .toString()),
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontFamily: 'Strong'),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Icon(
-                                                Icons.comment,
-                                                size: 15,
-                                                color: Colors.redAccent,
-                                              ),
-                                              Text(
-                                                  ' ${posts[index]['comment']
-                                                      .toString()}',
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.red)),
-                                              SizedBox(width: 10),
-                                              Icon(
-                                                Icons.thumb_up,
-                                                size: 15,
-                                                color: Colors.red,
-                                              ),
-                                              Text(
-                                                  ' ${posts[index]['likes']
-                                                      .toString()}',
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.red))
-                                            ],
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.timer,
-                                                size: 12, color: Colors.grey),
-                                            Text(posts[index]['time'],
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.grey)),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
+                  if (blockid.contains(posts[index]['writer']))
+                    return Container();
+                  else
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0), bottom: Radius.circular(10.0)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0), //(x,y)
+                            blurRadius: 5.0,
+                          ),
+                        ],
+                      ),
+
+                      height: 80.0,
+                      child: InkWell(
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.fromLTRB(10.0, 0, 8.0, 0),
+                          child: Column(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(),
+                              Text(
+                                (posts[index]['title']),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                allDetail(
-                                  index: posts[index]["id"],
-                                ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.person, size: 15),
+                                        Text(
+                                          (posts[index]['writer']
+                                              .toString()),
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontFamily: 'Strong'),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Icon(
+                                          Icons.comment,
+                                          size: 15,
+                                          color: Colors.redAccent,
+                                        ),
+                                        Text(
+                                            ' ${posts[index]['comment']
+                                                .toString()}',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.red)),
+                                        SizedBox(width: 10),
+                                        Icon(
+                                          Icons.thumb_up,
+                                          size: 15,
+                                          color: Colors.red,
+                                        ),
+                                        Text(
+                                            ' ${posts[index]['likes']
+                                                .toString()}',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.red))
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.timer,
+                                          size: 12, color: Colors.grey),
+                                      Text(posts[index]['time'],
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey)),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  allDetail(
+                                    index: posts[index]["id"],
+                                  ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   );
+
                 }
               }),
           onRefresh: _getData,
@@ -261,18 +266,18 @@ class _InfoState extends State<Info> with AutomaticKeepAliveClientMixin<Info> {
             }
             return '주식정보방';
           })(),
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Color.fromRGBO(240, 175, 142, 100),
+        backgroundColor: Color.fromRGBO(122, 154, 130, 1),
         iconTheme: IconThemeData(
-          color: Colors.black,
+          color: Colors.white,
         ),
         actions: [
           if (widget.category == 'f')
             IconButton(
                 icon: Icon(
                   CupertinoIcons.pencil,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
                 onPressed: () {
                   if (token != null)
@@ -301,14 +306,21 @@ class _InfoState extends State<Info> with AutomaticKeepAliveClientMixin<Info> {
           IconButton(
               icon: Icon(
                 Icons.search,
-                color: Colors.black,
+                color: Colors.white,
               ),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            DomesticSearchPage(category: 'f')));
+                if (widget.category == 'f')
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              DomesticSearchPage(category: 'f')));
+                else
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              DomesticSearchPage(category: 'd')));
               })
         ],
       ),

@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'dart:core';
-import 'dart:core';
+
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
@@ -49,12 +47,13 @@ class _RecommendState extends State<Recommend> {
     });
     return items;
   }
+
   Future recommendlog() async {
     await analytics.setCurrentScreen(
       screenName: '추천주기록',
-
     );
   } //앱
+
   @override
   void initState() {
     super.initState();
@@ -92,10 +91,13 @@ class _RecommendState extends State<Recommend> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(240, 175, 142,100),
           automaticallyImplyLeading: false,
           backwardsCompatibility: false,
           toolbarHeight: 110,
+          backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
           title: Column(
             children: [
               Padding(
@@ -103,9 +105,9 @@ class _RecommendState extends State<Recommend> {
                 child: Text(
                   '추천주 기록장',
                   style: TextStyle(
-                      fontFamily: 'Strong',
                       fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                      fontSize: 16,
+                      color: Colors.white),
                 ),
               ),
               _DateSelect(),
@@ -138,7 +140,7 @@ class _RecommendState extends State<Recommend> {
           ),
         ]),
         body: Container(
-          color: Color.fromRGBO(240, 175, 142,100),
+          color: Colors.white,
           child: Column(
             children: [_List()],
           ),
@@ -199,7 +201,8 @@ class _RecommendState extends State<Recommend> {
                     borderRadius: BorderRadius.circular(25.7),
                   ),
                 ),
-                style: TextStyle(color: FlexColor.darkScaffoldBackground),
+                style: TextStyle(
+                    color: FlexColor.darkScaffoldBackground, fontSize: 12),
                 textAlign: TextAlign.center,
                 autofocus: false,
                 readOnly: true,
@@ -346,11 +349,9 @@ class _RecommendState extends State<Recommend> {
                   label: '클릭하여 종목선택',
                   items: items,
                   dropDownMenuItems: items,
-
                   onChanged: (value) {
                     selectedItems = value;
                   },
-
                 ),
               ),
             ],
@@ -416,8 +417,8 @@ class _RecommendState extends State<Recommend> {
               controller: whyController,
               decoration: InputDecoration(
                   hintText: '추천 이유 및 기타 내용',
-                  contentPadding: const EdgeInsets.only(
-                      left: 14.0, bottom: 1.0, top: 1.0),
+                  contentPadding:
+                  const EdgeInsets.only(left: 14.0, bottom: 1.0, top: 1.0),
                   border: UnderlineInputBorder(
                     borderSide: BorderSide(width: 0),
                   )),
@@ -429,7 +430,7 @@ class _RecommendState extends State<Recommend> {
               child: new TextButton(
                 autofocus: false,
                 onPressed: () async {
-                  if (selectedItems!=null &&
+                  if (selectedItems != null &&
                       dateController.text.isNotEmpty &&
                       recommenderController.text.isNotEmpty &&
                       priceController.text.isNotEmpty) {
@@ -457,7 +458,7 @@ class _RecommendState extends State<Recommend> {
                       "종목": selectedItems,
                       "기타": why,
                       "추천인": recommenderController.text,
-                      "손절가" : sonController.text
+                      "손절가": sonController.text
                     };
                     await firestore
                         .collection(_auth.currentUser!.uid)
@@ -466,9 +467,7 @@ class _RecommendState extends State<Recommend> {
                         .then((DocumentSnapshot ds) {
                       try {
                         set = ds[date];
-                      } catch (e) {
-
-                      }
+                      } catch (e) {}
                     });
 
                     set.add(newset);
@@ -503,10 +502,10 @@ class _RecommendState extends State<Recommend> {
                                             content: Stack(
                                               overflow: Overflow.visible,
                                               children: <Widget>[
-                                                SingleChildScrollView(child: _InputWidget()),
+                                                SingleChildScrollView(
+                                                    child: _InputWidget()),
                                               ],
                                             ),
-
                                           );
                                         });
                                   },
@@ -568,7 +567,6 @@ class _RecommendState extends State<Recommend> {
               children: [
                 for (var index in keyss)
                   Container(
-
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -587,8 +585,9 @@ class _RecommendState extends State<Recommend> {
                                   fontWeight: FontWeight.bold),
                             ),
                             decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color.fromRGBO(96, 97, 179, 1)),
+                              shape: BoxShape.circle,
+                              color: Color.fromRGBO(0, 82, 33, 1),
+                            ),
                             padding: EdgeInsets.all(10),
                           ),
                         ),
@@ -608,47 +607,35 @@ class _RecommendState extends State<Recommend> {
                                           builder: (context) {
                                             return AlertDialog(
                                               title: Text('기록 삭제'),
-                                              content:
-                                              Text('삭제하시겠습니까?'),
+                                              content: Text('삭제하시겠습니까?'),
                                               actions: [
                                                 FlatButton(
                                                     child: Text('아니오'),
                                                     onPressed: () {
                                                       Navigator.pop(context);
-                                                    }
-                                                ),
+                                                    }),
                                                 FlatButton(
                                                   child: Text('네'),
-                                                  onPressed:
-                                                      () async {
+                                                  onPressed: () async {
                                                     List set = data[index];
                                                     set.remove(i);
 
-                                                    if (set.isNotEmpty)
-                                                    {
+                                                    if (set.isNotEmpty) {
                                                       await FirebaseFirestore
                                                           .instance
                                                           .collection(_auth
-                                                          .currentUser!
-                                                          .uid)
-                                                          .doc(
-                                                          '추천주 기록')
-                                                          .update({
-                                                        index: set
-                                                      });
-                                                    }
-                                                    else {
-
+                                                          .currentUser!.uid)
+                                                          .doc('추천주 기록')
+                                                          .update({index: set});
+                                                    } else {
                                                       await FirebaseFirestore
                                                           .instance
                                                           .collection(_auth
-                                                          .currentUser!
-                                                          .uid)
-                                                          .doc(
-                                                          '추천주 기록')
+                                                          .currentUser!.uid)
+                                                          .doc('추천주 기록')
                                                           .update({
-                                                        index: FieldValue
-                                                            .delete()
+                                                        index:
+                                                        FieldValue.delete()
                                                       });
                                                     }
                                                     Navigator.pop(context);
@@ -658,22 +645,21 @@ class _RecommendState extends State<Recommend> {
                                             );
                                           },
                                         );
-
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(6.0),
                                         child: Container(
                                           child: Card(
-                                            color:
-                                            Color.fromRGBO(255,236,227,1),
+                                            color: Color.fromRGBO(
+                                                255, 236, 227, 1),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(7.0),
+                                              padding:
+                                              const EdgeInsets.all(7.0),
                                               child: Column(
                                                 children: [
                                                   Padding(
-                                                    padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        0, 0, 0, 8),
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(0, 0, 0, 8),
                                                     child: Row(
                                                       children: [
                                                         Text('종목: '),
@@ -681,9 +667,9 @@ class _RecommendState extends State<Recommend> {
                                                           i['종목'],
                                                           style: TextStyle(
                                                               fontFamily:
-                                                              'Strong',
+                                                              'NanumGothic',
                                                               color: Colors.red,
-                                                              fontSize: 20),
+                                                              fontSize: 15),
                                                         )
                                                       ],
                                                     ),
@@ -695,8 +681,8 @@ class _RecommendState extends State<Recommend> {
                                                           style: TextStyle(
                                                               fontFamily:
                                                               'Strong',
-                                                              color: Colors
-                                                                  .black,
+                                                              color:
+                                                              Colors.black,
                                                               fontSize: 15)),
                                                     ],
                                                   ),
@@ -711,8 +697,8 @@ class _RecommendState extends State<Recommend> {
                                                           Text(
                                                             i['매수추천가'],
                                                             style: TextStyle(
-
-                                                                color: Colors.red,
+                                                                color:
+                                                                Colors.red,
                                                                 fontSize: 15),
                                                           ),
                                                         ],
@@ -723,13 +709,12 @@ class _RecommendState extends State<Recommend> {
                                                           Text(
                                                             i['손절가'],
                                                             style: TextStyle(
-
-                                                                color: Colors.red,
+                                                                color:
+                                                                Colors.red,
                                                                 fontSize: 15),
                                                           )
                                                         ],
                                                       ),
-
                                                     ],
                                                   ),
                                                   Container(
@@ -740,12 +725,14 @@ class _RecommendState extends State<Recommend> {
                                                         padding:
                                                         EdgeInsets.all(10),
                                                         child: Text(
-                                                          i['기타'].replaceAll("\\n", "\n"),
+                                                          i['기타'].replaceAll(
+                                                              "\\n", "\n"),
                                                           maxLines: 40,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                         ),
-                                                        color: Color(0xffFFFFA5),
+                                                        color:
+                                                        Color(0xffFFFFA5),
                                                       ),
                                                     ),
                                                   )

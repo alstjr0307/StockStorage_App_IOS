@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
 
           scheme: usedFlexScheme,
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
-          fontFamily: 'Hanma'
+          fontFamily: 'Nanum'
       ).toTheme,
       themeMode:  themeMode,
       debugShowCheckedModeBanner: false,

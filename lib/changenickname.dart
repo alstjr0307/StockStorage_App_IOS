@@ -21,7 +21,6 @@ class _State extends State<ChangeNickname> {
       "first_name" : nickname
     };
 
-    var jsonData;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString("token");
     var userid = sharedPreferences.getInt("userID");
@@ -32,12 +31,9 @@ class _State extends State<ChangeNickname> {
         headers: {"Authorization": "Token ${token}"},
         body: data);
 
-    print(response.statusCode);
-    print('user: $userid');
-    if (response.statusCode == 200) {
-      print('1');
 
-      print('제대로 됨');
+    if (response.statusCode == 200) {
+
       setState(() {
         _isLoading = false;
         sharedPreferences.setString("nickname", nickname);
@@ -69,7 +65,7 @@ class _State extends State<ChangeNickname> {
               ListTile(
                 leading: Icon(Icons.error, size: 50),
                 title: Text(
-                  '중복된 닉네임입니다',
+                  '중복된 닉네임이거나 사용 불가능한 닉네임입니다',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -86,6 +82,11 @@ class _State extends State<ChangeNickname> {
     return Scaffold(
       appBar: AppBar(
         title: Text('닉네임 변경'),
+        backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -97,11 +98,11 @@ class _State extends State<ChangeNickname> {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10),
                 child: Text(
-                  '닉네임 변경',
+                  '새로운 닉네임을 입력해주세요',
                   style: TextStyle(
-                      color: Colors.blue,
+                      color: Colors.black,
                       fontWeight: FontWeight.w500,
-                      fontSize: 30),
+                      fontSize: 20),
                 )),
 
             Container(
@@ -136,6 +137,7 @@ class _State extends State<ChangeNickname> {
                 },
               ),
             ),
+            SizedBox(height:30),
             errormsg,
           ],
         ),

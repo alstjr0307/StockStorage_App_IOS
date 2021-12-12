@@ -106,103 +106,125 @@ class _WriterPostState extends State<WriterPost>
   }
 
   Widget _buildList() {
-    return Container(
-      color: Color.fromRGBO(240, 175, 142,100),
-      child: RefreshIndicator(
-        child: ListView.builder(
-            itemCount: posts.length +1,
-            controller: _sc,
-            // Add one more item for progress indicator
-            padding: EdgeInsets.symmetric(vertical: 8.0),
-            itemBuilder: (BuildContext context, int index) {
-              print('index${index}');
-              if (index == posts.length) {
-                return _buildProgressIndicator();
+    return Expanded(
+      child: Container(
+        color: Colors.white,
+        child: RefreshIndicator(
+          child: ListView.builder(
+              itemCount: posts.length + 1,
+              controller: _sc,
+              // Add one more item for progress indicator
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              itemBuilder: (BuildContext context, int index) {
+                if (index == posts.length) {
+                  return _buildProgressIndicator();
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(10.0), bottom: Radius.circular(10.0)),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0.0, 1.0), //(x,y)
+                            blurRadius: 5.0,
+                          ),
+                        ],
+                      ),
 
-
-              }
-              else {
-                return Container(
-                  margin: new EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  width: 25.0,
-                  height: 80.0,
-                  child: InkWell(
-                    child: Card(
-                      margin: EdgeInsets.symmetric(vertical: 2, horizontal: 0),
-                      color: Color.fromRGBO(240, 175, 142,0.5),
-                      elevation: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(10.0,0,8.0,0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                      height: 80.0,
+                      child: InkWell(
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.fromLTRB(10.0, 0, 8.0, 0),
+                          child: Column(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(),
+                              Text(
+                                (posts[index]['title']),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Row(
                                 children: [
-                                  SizedBox(),
-                                  Text(
-                                    (posts[index]['title']),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.person, size: 15),
+                                        Text(
+                                          (posts[index]['writer']
+                                              .toString()),
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontFamily: 'Strong'),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Icon(
+                                          Icons.comment,
+                                          size: 15,
+                                          color: Colors.redAccent,
+                                        ),
+                                        Text(
+                                            ' ${posts[index]['comment']
+                                                .toString()}',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.red)),
+                                        SizedBox(width: 10),
+                                        Icon(
+                                          Icons.thumb_up,
+                                          size: 15,
+                                          color: Colors.red,
+                                        ),
+                                        Text(
+                                            ' ${posts[index]['likes']
+                                                .toString()}',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.red))
+                                      ],
                                     ),
                                   ),
                                   Row(
                                     children: [
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.person, size:15),
-                                            Text(
-                                              (posts[index]['writer'].toString()), style: TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: 'Strong'
-                                            ),
-                                            ),
-                                            SizedBox(width:10),
-                                            Icon(Icons.comment, size: 15, color: Colors.redAccent,),
-                                            Text(
-                                                ' ${posts[index]['comment'].toString()}', style: TextStyle(fontSize:12,color: Colors.red)),
-
-                                            SizedBox(width:10),
-                                            Icon(Icons.thumb_up, size:15, color: Colors.red,),
-                                            Text(' ${posts[index]['likes'].toString()}', style: TextStyle(fontSize :12, color: Colors.red))
-
-                                          ],
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(Icons.timer, size: 12,color: Colors.grey),
-                                          Text(posts[index]['time'],style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                        ],
-                                      )
+                                      Icon(Icons.timer,
+                                          size: 12, color: Colors.grey),
+                                      Text(posts[index]['time'],
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey)),
                                     ],
-                                  ),
+                                  )
                                 ],
                               ),
-                            ),
-                          ),
-
-                        ],
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => allDetail(
-                            index: posts[index]["id"],
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
-                );
-              }
-            }),
-        onRefresh: _getData,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  allDetail(
+                                    index: posts[index]["id"],
+                                  ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                }
+              }),
+          onRefresh: _getData,
+        ),
       ),
     );
   }
@@ -231,10 +253,12 @@ class _WriterPostState extends State<WriterPost>
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(240, 175, 142,100),
-        iconTheme: IconThemeData(color: Colors.black,),
+        backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
         actionsIconTheme: IconThemeData(color: Colors.black,),
-        title: Text(widget.nickname+'님의 글', style:TextStyle(color:Colors.black)),
+        title: Text(widget.nickname+'님의 글', style:TextStyle(color:Colors.white, fontFamily: 'NanumGothic')),
       ),
       body: Column(
         children: [

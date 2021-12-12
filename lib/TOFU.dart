@@ -86,10 +86,13 @@ class _TofuState extends State<Tofu> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(240, 175, 142,100),
           automaticallyImplyLeading: false,
           backwardsCompatibility: false,
           toolbarHeight: 110,
+          backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
           title: Column(
             children: [
               Padding(
@@ -97,9 +100,10 @@ class _TofuState extends State<Tofu> {
                 child: Text(
                   '두부개미 추천주',
                   style: TextStyle(
-                      fontFamily: 'Strong',
+
                       fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                      fontSize: 16,
+                      color: Colors.white),
                 ),
               ),
               _DateSelect(),
@@ -116,7 +120,7 @@ class _TofuState extends State<Tofu> {
         ],
         ),
         body: Container(
-          color: Color.fromRGBO(240, 175, 142,100),
+          color: Colors.white,
           child: Column(
             children: [_List()],
           ),
@@ -261,13 +265,14 @@ class _TofuState extends State<Tofu> {
             );
           }
           final data = snapshot.requireData.data();
+
           var keysss = data!.keys
               .where((k) =>
-          k.substring(6, 7) == monthController.text.substring(6, 7) &&
+          (monthController.text.length ==8 && k.substring(6, 7) == monthController.text.substring(6, 7) &&
               k.substring(0, 4) ==
-                  monthController.text.substring(0, 4) ||
-              k.substring(5, 7) == monthController.text.substring(6, 8) &&
-                  k.substring(0, 4) == monthController.text.substring(0, 4))
+                  monthController.text.substring(0, 4) )||
+              (k.substring(5, 7) == monthController.text.substring(6, 8) &&
+                  k.substring(0, 4) == monthController.text.substring(0, 4)))
               .toList();
           keysss.sort();
           var keyss = List.from(keysss.reversed);
@@ -294,8 +299,8 @@ class _TofuState extends State<Tofu> {
                                   fontWeight: FontWeight.bold),
                             ),
                             decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color.fromRGBO(96, 97, 179, 1)),
+                              shape: BoxShape.circle,
+                              color:Color.fromRGBO(0,82,33, 1),),
                             padding: EdgeInsets.all(10),
                           ),
                         ),
@@ -384,6 +389,7 @@ class _TofuState extends State<Tofu> {
                                                         maxLines: 40,
                                                         overflow: TextOverflow
                                                             .ellipsis,
+                                                        style: TextStyle(fontSize: 13, fontFamily: 'Nanum'),
                                                       ),
                                                       color: Color(0xffFFFFA5),
                                                     ),
@@ -409,8 +415,8 @@ class _TofuState extends State<Tofu> {
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(
-                              color: Colors.black,
-                              width: 3,
+                              color: Colors.grey,
+                              width: 2,
                             ))),
                   ),
               ],

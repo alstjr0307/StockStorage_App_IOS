@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:custom_searchable_dropdown/custom_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -23,17 +24,19 @@ class _AddPostState extends State<AddPost> {
   bool asTabs = false;
   late String selectedValue;
 
-  List<int> selectedItems = [];
+  List selectedItems = [];
   static const String appTitle = "Search Choices demo";
   final String loremIpsum = "Lorem sdf sdfipsum dsf sdf dolor";
 
-  final List<DropdownMenuItem> items = [];
+  final List items = [];
+
   Future logging() async {
     await analytics.setCurrentScreen(
       screenName: '글쓰기',
       screenClassOverride: '글쓰기',
     );
   } //앱
+
   String result = '';
   HtmlEditorController controller = HtmlEditorController();
   TextEditingController titleController = TextEditingController();
@@ -46,10 +49,7 @@ class _AddPostState extends State<AddPost> {
     var json = jsonDecode(data);
     setState(() {
       for (Map stock in json) {
-        items.add(DropdownMenuItem(
-          child: Text(stock["name"]),
-          value: stock["name"],
-        ));
+        items.add(stock['name']);
       }
     });
     return items;
@@ -66,8 +66,10 @@ class _AddPostState extends State<AddPost> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(240, 175, 142,100),
-        iconTheme: IconThemeData(color: Colors.black, size: 40),
+        backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
         actions: [
           TextButton(
             style: TextButton.styleFrom(
@@ -86,6 +88,7 @@ class _AddPostState extends State<AddPost> {
                         child: new Text("네"),
                         onPressed: () {
                           Navigator.pop(context);
+
                           controller.clear();
                         },
                       ),
@@ -123,7 +126,6 @@ class _AddPostState extends State<AddPost> {
                     title: new Text("작성 완료"),
                     content: new Text("글을 업로드 하시겠습니까?"),
                     actions: <Widget>[
-
                       new FlatButton(
                         child: new Text("취소"),
                         onPressed: () {
@@ -136,7 +138,6 @@ class _AddPostState extends State<AddPost> {
                           final txt = await controller.getText();
                           Navigator.pop(context);
                           await addPost(titleController.text, txt, 'f');
-
                         },
                       ),
                     ],
@@ -206,7 +207,7 @@ class _AddPostState extends State<AddPost> {
                       return true;
                     },
                   ),
-                  otherOptions: OtherOptions(height: 500),
+                  otherOptions: OtherOptions(height: 300),
 
                   //this is commented because it overrides the default Summernote handlers
                   /*onImageLinkInsert: (String? url) {
@@ -225,6 +226,53 @@ class _AddPostState extends State<AddPost> {
           SizedBox(
             height: 50,
           ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey, width: 2),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.tag,
+                        color: Colors.blue,
+                      ),
+                      Text(
+                        '종목 태그',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  child: CustomSearchableDropDown(
+                    items: items,
+                    label: '종목을 골라주세요',
+                    multiSelect: true,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Icon(Icons.search),
+                    ),
+                    dropDownMenuItems: items,
+                    hint: 'ss',
+                    multiSelectTag: 'Names',
+                    multiSelectValuesAsWidget: true,
+
+                    onChanged: (value) {
+                      setState(() {
+                        selectedItems =jsonDecode(value) ;
+
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -239,7 +287,6 @@ class _AddPostState extends State<AddPost> {
   }
 
   Future<void> addPost(String title, String content, String category) async {
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -261,8 +308,8 @@ class _AddPostState extends State<AddPost> {
     var now = new DateTime.now();
     var str = DateFormat("yyyy-MM-ddTHH:mm:ss").format(now);
     category = "F";
-    var pushtoken =  sharedPreferences.getString('pushtoken');
-    print(pushtoken.toString()+'푸시');
+    var pushtoken = sharedPreferences.getString('pushtoken');
+    print(pushtoken.toString() + '푸시');
     final responseerw = await http.post(
         Uri.http('13.125.62.90', "api/v1/BlogPosts/"),
         headers: {
@@ -279,26 +326,24 @@ class _AddPostState extends State<AddPost> {
             "modify_dt": str,
             "category": category,
             "owner": sharedPreferences.getInt('userID'),
-            "pushtoken" : pushtoken,
+            "pushtoken": pushtoken,
           },
         ));
     if (responseerw.statusCode == 201) {
       var postid = jsonDecode(responseerw.body)["id"];
       print(responseerw.body);
 
-
       for (var i = 0; i < selectedItems.length; i++) {
-        print(items[selectedItems[i]].value.toString());
         final tagpost =
-            await http.post(Uri.http('13.125.62.90', 'api/v1/TaggitTag/'),
-                headers: {
-                  "Authorization": "Token ${token}",
-                  "Content-Type": "application/json",
-                },
-                body: jsonEncode(<String, dynamic>{
-                  "slug": items[selectedItems[i]].value.toString() + 'z',
-                  "name": items[selectedItems[i]].value.toString()
-                }));
+        await http.post(Uri.http('13.125.62.90', 'api/v1/TaggitTag/'),
+            headers: {
+              "Authorization": "Token ${token}",
+              "Content-Type": "application/json",
+            },
+            body: jsonEncode(<String, dynamic>{
+              "slug": selectedItems[i].toString() + 'z',
+              "name": selectedItems[i].toString()
+            }));
         if (tagpost.statusCode == 201) {
           var tagid = jsonDecode(tagpost.body)["id"];
           print('태그 새로추가 태그아이디는 ${tagid}');
@@ -315,10 +360,9 @@ class _AddPostState extends State<AddPost> {
             }),
           );
         } else if (tagpost.statusCode == 400) {
-
           var tagg = await http.get(
             Uri.http('13.125.62.90', 'api/v1/TaggitTag/',
-                {"name": items[selectedItems[i]].value}),
+                {"name": selectedItems[i]}),
             headers: {
               "Authorization": "Token ${token}",
               "Content-Type": "application/json"

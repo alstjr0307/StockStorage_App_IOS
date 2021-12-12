@@ -95,7 +95,10 @@ class _DiaryState extends State<Diary> {
           automaticallyImplyLeading: false,
           backwardsCompatibility: false,
           toolbarHeight: 110,
-          backgroundColor: Color.fromRGBO(240, 175, 142, 100),
+          backgroundColor: Color.fromRGBO(122, 154, 130, 1),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
           title: Column(
             children: [
               Padding(
@@ -103,9 +106,10 @@ class _DiaryState extends State<Diary> {
                 child: Text(
                   '매매일지',
                   style: TextStyle(
-                      fontFamily: 'Strong',
+
                       fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                      fontSize: 16,
+                      color: Colors.white),
                 ),
               ),
               _DateSelect(),
@@ -140,7 +144,7 @@ class _DiaryState extends State<Diary> {
           ),
         ]),
         body: Container(
-          color: Color.fromRGBO(240, 175, 142, 100),
+          color: Colors.white,
           child: Column(
             children: [_List()],
           ),
@@ -187,11 +191,12 @@ class _DiaryState extends State<Diary> {
             child: Container(
               child: TextField(
                 decoration: InputDecoration(
+
                   filled: true,
                   fillColor: FlexColor.lightSurface,
                   hintText: '월 선택',
                   contentPadding:
-                      const EdgeInsets.only(left: 14.0, bottom: 1.0, top: 1.0),
+                  const EdgeInsets.only(left: 14.0, bottom: 1.0, top: 1.0),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white),
                     borderRadius: BorderRadius.circular(25.7),
@@ -201,7 +206,7 @@ class _DiaryState extends State<Diary> {
                     borderRadius: BorderRadius.circular(25.7),
                   ),
                 ),
-                style: TextStyle(color: FlexColor.darkScaffoldBackground),
+                style: TextStyle(color: FlexColor.darkScaffoldBackground, fontSize: 12),
                 textAlign: TextAlign.center,
                 autofocus: false,
                 readOnly: true,
@@ -350,14 +355,14 @@ class _DiaryState extends State<Diary> {
                       hint: type == null
                           ? Text('선택')
                           : Text(
-                              type,
-                              style: TextStyle(color: Colors.blue),
-                            ),
+                        type,
+                        style: TextStyle(color: Colors.blue),
+                      ),
                       isExpanded: true,
                       iconSize: 30.0,
                       style: TextStyle(color: Colors.blue),
                       items: ['매수', '매도'].map(
-                        (val) {
+                            (val) {
                           return DropdownMenuItem<String>(
                             value: val,
                             child: Text(val),
@@ -366,7 +371,7 @@ class _DiaryState extends State<Diary> {
                       ).toList(),
                       onChanged: (val) {
                         setState(
-                          () {
+                              () {
                             type = val;
                           },
                         );
@@ -534,7 +539,7 @@ class _DiaryState extends State<Diary> {
                                                   children: <Widget>[
                                                     SingleChildScrollView(
                                                         child:
-                                                            _InputWidget('삭제')),
+                                                        _InputWidget('삭제')),
                                                   ],
                                                 ),
                                               );
@@ -587,423 +592,422 @@ class _DiaryState extends State<Diary> {
           final data = snapshot.requireData.data();
           var keyss = data!.keys
               .where((k) =>
-                  k.substring(6, 7) == monthController.text.substring(6, 7) &&
-                      k.substring(0, 4) ==
-                          monthController.text.substring(0, 4) ||
-                  k.substring(5, 7) == monthController.text.substring(6, 8) &&
-                      k.substring(0, 4) == monthController.text.substring(0, 4))
+          k.substring(6, 7) == monthController.text.substring(6, 7) &&
+              k.substring(0, 4) ==
+                  monthController.text.substring(0, 4) ||
+              k.substring(5, 7) == monthController.text.substring(6, 8) &&
+                  k.substring(0, 4) == monthController.text.substring(0, 4))
               .toList();
           keyss.sort();
           return Flexible(
               child: ListView(
-            children: [
-              for (var index in keyss)
-                Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 60,
-                          height: 60,
-                          child: Text(
-                            index.replaceRange(0, 8, '') + '일',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                children: [
+                  for (var index in keyss)
+                    Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: 60,
+                              height: 60,
+                              child: Text(
+                                index.replaceRange(0, 8, '') + '일',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color.fromRGBO(0,82,33, 1),
+                              ),
+                              padding: EdgeInsets.all(10),
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromRGBO(96, 97, 179, 1),
-                          ),
-                          padding: EdgeInsets.all(10),
-                        ),
-                      ),
-                      Expanded(
-                          child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            //data[index]가 날짜별 갯수
-                            //data[index].keys는 갯수들
-                            for (var i in data[index].keys)
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
-                                child: Container(
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 80,
-                                            padding: EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.rectangle,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15)),
-                                                color: Color.fromRGBO(
-                                                    137, 119, 173, 5)),
-                                            child: Text(
-                                              i,
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontFamily: 'Hanma',
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Column(
-                                            children: [
-                                              for (var j in data[index][i].keys)
-                                                GestureDetector(
-                                                  onTapDown:
-                                                      (TapDownDetails details) {
-                                                    double left = details
-                                                        .globalPosition.dx;
-                                                    double top = details
-                                                        .globalPosition.dy;
-                                                    showMenu(
-                                                      position:
-                                                          RelativeRect.fromLTRB(
-                                                              left, top, 0, 0),
-                                                      context: context,
-                                                      items: [
-                                                        PopupMenuItem(
-                                                          value: 1,
-                                                          child: Text("삭제"),
-                                                        ),
-                                                        PopupMenuItem(
-                                                          value: 2,
-                                                          child: Text("수정"),
-                                                        ),
-                                                      ],
-                                                      elevation: 8.0,
-                                                    ).then((value) {
+                          Expanded(
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    //data[index]가 날짜별 갯수
+                                    //data[index].keys는 갯수들
+                                    for (var i in data[index].keys)
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+                                        child: Container(
+                                          child: Container(
+                                            padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: 80,
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.rectangle,
+                                                        borderRadius: BorderRadius.all(
+                                                            Radius.circular(15)),
+                                                        color: Colors.black),
+                                                    child: Text(
+                                                      i,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      for (var j in data[index][i].keys)
+                                                        GestureDetector(
+                                                          onLongPressStart:
+                                                              (LongPressStartDetails details) {
+                                                            double left = details
+                                                                .globalPosition.dx;
+                                                            double top = details
+                                                                .globalPosition.dy;
+                                                            showMenu(
+                                                              position:
+                                                              RelativeRect.fromLTRB(
+                                                                  left, top, 0, 0),
+                                                              context: context,
+                                                              items: [
+                                                                PopupMenuItem(
+                                                                  value: 1,
+                                                                  child: Text("삭제"),
+                                                                ),
+                                                                PopupMenuItem(
+                                                                  value: 2,
+                                                                  child: Text("수정"),
+                                                                ),
+                                                              ],
+                                                              elevation: 8.0,
+                                                            ).then((value) {
 // NOTE: even you didnt select item this method will be called with null of value so you should call your call back with checking if value is not null
-                                                      if (value !=
-                                                          null) if (value == 1)
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return AlertDialog(
-                                                                title: Text(
-                                                                    '기록 삭제'),
-                                                                content: Text(
-                                                                    '삭제하시겠습니까?'),
-                                                                actions: [
-                                                                  FlatButton(
-                                                                      child: Text(
-                                                                          '아니오'),
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      }),
-                                                                  FlatButton(
-                                                                    child: Text(
-                                                                        '네'),
-                                                                    onPressed:
-                                                                        () async {
-                                                                      Map<String,
-                                                                              dynamic>
-                                                                          update =
-                                                                          data[
+                                                              if (value !=
+                                                                  null) if (value == 1)
+                                                                showDialog(
+                                                                    context: context,
+                                                                    builder: (context) {
+                                                                      return AlertDialog(
+                                                                        title: Text(
+                                                                            '기록 삭제'),
+                                                                        content: Text(
+                                                                            '삭제하시겠습니까?'),
+                                                                        actions: [
+                                                                          FlatButton(
+                                                                              child: Text(
+                                                                                  '아니오'),
+                                                                              onPressed:
+                                                                                  () {
+                                                                                Navigator.pop(
+                                                                                    context);
+                                                                              }),
+                                                                          FlatButton(
+                                                                            child: Text(
+                                                                                '네'),
+                                                                            onPressed:
+                                                                                () async {
+                                                                              Map<String,
+                                                                                  dynamic>
+                                                                              update =
+                                                                              data[
                                                                               index];
 
-                                                                      update[i].removeWhere((key,
-                                                                              value) =>
-                                                                          key ==
-                                                                          j);
-                                                                      var keylist = update[
+                                                                              update[i].removeWhere((key,
+                                                                                  value) =>
+                                                                              key ==
+                                                                                  j);
+                                                                              var keylist = update[
                                                                               i]
-                                                                          .keys
-                                                                          .toList();
-                                                                      var newmap =
-                                                                          {};
-                                                                      var cou =
-                                                                          1;
+                                                                                  .keys
+                                                                                  .toList();
+                                                                              var newmap =
+                                                                              {};
+                                                                              var cou =
+                                                                              1;
 
-                                                                      for (var k
-                                                                          in keylist) {
-                                                                        newmap[cou
-                                                                            .toString()] = update[
+                                                                              for (var k
+                                                                              in keylist) {
+                                                                                newmap[cou
+                                                                                    .toString()] = update[
                                                                                 i]
-                                                                            [k];
-                                                                        cou++;
-                                                                      }
+                                                                                [k];
+                                                                                cou++;
+                                                                              }
 
-                                                                      update[i] =
-                                                                          newmap;
+                                                                              update[i] =
+                                                                                  newmap;
 
-                                                                      if (newmap.toString() ==
-                                                                              '{}' &&
-                                                                          update.keys.toList().length ==
-                                                                              1)
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection(_auth
-                                                                                .currentUser!.uid)
-                                                                            .doc(
-                                                                                '매매일지')
-                                                                            .update({
-                                                                          index:
-                                                                              FieldValue.delete()
-                                                                        });
-                                                                      else if (newmap
-                                                                              .toString() !=
-                                                                          '{}') {
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection(_auth
-                                                                                .currentUser!.uid)
-                                                                            .doc(
-                                                                                '매매일지')
-                                                                            .update({
-                                                                          index:
-                                                                              update
-                                                                        });
-                                                                      } else {
-                                                                        update.removeWhere((key,
-                                                                                value) =>
-                                                                            key ==
-                                                                            i);
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection(_auth
-                                                                                .currentUser!.uid)
-                                                                            .doc(
-                                                                                '매매일지')
-                                                                            .update({
-                                                                          index:
-                                                                              update
-                                                                        });
-                                                                      }
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            });
-                                                      if (value == 2) {
-                                                        selectedItems = i;
-                                                        dateController.text =
-                                                            index;
-                                                        priceController.text =
-                                                            data[index][i][j]
+                                                                              if (newmap.toString() ==
+                                                                                  '{}' &&
+                                                                                  update.keys.toList().length ==
+                                                                                      1)
+                                                                                await FirebaseFirestore
+                                                                                    .instance
+                                                                                    .collection(_auth
+                                                                                    .currentUser!.uid)
+                                                                                    .doc(
+                                                                                    '매매일지')
+                                                                                    .update({
+                                                                                  index:
+                                                                                  FieldValue.delete()
+                                                                                });
+                                                                              else if (newmap
+                                                                                  .toString() !=
+                                                                                  '{}') {
+                                                                                await FirebaseFirestore
+                                                                                    .instance
+                                                                                    .collection(_auth
+                                                                                    .currentUser!.uid)
+                                                                                    .doc(
+                                                                                    '매매일지')
+                                                                                    .update({
+                                                                                  index:
+                                                                                  update
+                                                                                });
+                                                                              } else {
+                                                                                update.removeWhere((key,
+                                                                                    value) =>
+                                                                                key ==
+                                                                                    i);
+                                                                                await FirebaseFirestore
+                                                                                    .instance
+                                                                                    .collection(_auth
+                                                                                    .currentUser!.uid)
+                                                                                    .doc(
+                                                                                    '매매일지')
+                                                                                    .update({
+                                                                                  index:
+                                                                                  update
+                                                                                });
+                                                                              }
+                                                                              Navigator.pop(
+                                                                                  context);
+                                                                            },
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    });
+                                                              if (value == 2) {
+                                                                selectedItems = i;
+                                                                dateController.text =
+                                                                    index;
+                                                                priceController.text =
+                                                                data[index][i][j]
                                                                 ['단가'];
-                                                        countController.text =
-                                                            data[index][i][j]
+                                                                countController.text =
+                                                                data[index][i][j]
                                                                 ['수량'];
-                                                        type = data[index][i][j]
-                                                            ['매매'];
+                                                                type = data[index][i][j]
+                                                                ['매매'];
 
-                                                        whyController.text =
-                                                            data[index][i][j]
+                                                                whyController.text =
+                                                                data[index][i][j]
                                                                 ['이유'];
-                                                        showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
+                                                                showDialog(
+                                                                    context: context,
+                                                                    builder:
+                                                                        (BuildContext
                                                                     context) {
-                                                              return StatefulBuilder(
-                                                                  builder: (context,
-                                                                      setState) {
-                                                                return AlertDialog(
-                                                                  content:
-                                                                      Stack(
-                                                                    overflow:
-                                                                        Overflow
-                                                                            .visible,
-                                                                    children: <
-                                                                        Widget>[
-                                                                      _InputWidget(
-                                                                          j),
-                                                                    ],
-                                                                  ),
-                                                                );
-                                                              });
+                                                                      return StatefulBuilder(
+                                                                          builder: (context,
+                                                                              setState) {
+                                                                            return AlertDialog(
+                                                                              content:
+                                                                              Stack(
+                                                                                overflow:
+                                                                                Overflow
+                                                                                    .visible,
+                                                                                children: <
+                                                                                    Widget>[
+                                                                                  _InputWidget(
+                                                                                      j),
+                                                                                ],
+                                                                              ),
+                                                                            );
+                                                                          });
+                                                                    });
+                                                              }
                                                             });
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    child: Card(
-                                                      color: getMyColor(
-                                                        (data[index][i][j]
-                                                            ['매매']),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8.0),
-                                                        child: Column(
-                                                          children: [
-                                                            Container(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .fromLTRB(
+                                                          },
+                                                          child: Container(
+                                                            child: Card(
+                                                              color: getMyColor(
+                                                                (data[index][i][j]
+                                                                ['매매']),
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                                child: Column(
+                                                                  children: [
+                                                                    Container(
+                                                                      padding:
+                                                                      EdgeInsets
+                                                                          .fromLTRB(
                                                                           0,
                                                                           0,
                                                                           0,
                                                                           5),
-                                                              width: 200,
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  if (data[index][i]
-                                                                              [
-                                                                              j]
+                                                                      width: 200,
+                                                                      child: Row(
+                                                                        mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                        children: [
+                                                                          if (data[index][i]
+                                                                          [
+                                                                          j]
                                                                           [
                                                                           '매매'] ==
-                                                                      "매수")
-                                                                    Container(
-                                                                      child:
-                                                                          Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            '매수단가: ',
-                                                                            style:
-                                                                                TextStyle(fontSize: 14),
-                                                                          ),
-                                                                          Text(
-                                                                            data[index][i][j]['단가'].toString() +
-                                                                                '원',
-                                                                            style: TextStyle(
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontFamily: 'Hanma',
-                                                                                fontSize: 14),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  if (data[index][i]
-                                                                              [
-                                                                              j]
+                                                                              "매수")
+                                                                            Container(
+                                                                              child:
+                                                                              Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                    '매수단가: ',
+                                                                                    style:
+                                                                                    TextStyle(fontSize: 14),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    data[index][i][j]['단가'].toString() +
+                                                                                        '원',
+                                                                                    style: TextStyle(
+
+
+                                                                                        fontSize: 14),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          if (data[index][i]
+                                                                          [
+                                                                          j]
                                                                           [
                                                                           '매매'] !=
-                                                                      "매수")
-                                                                    Container(
-                                                                      child:
+                                                                              "매수")
+                                                                            Container(
+                                                                              child:
+                                                                              Row(
+                                                                                children: [
+                                                                                  Text(
+                                                                                      '매도단가: ',
+                                                                                      style: TextStyle(fontSize: 14)),
+                                                                                  Text(
+                                                                                    data[index][i][j]['단가'].toString() +
+                                                                                        '원',
+                                                                                    style: TextStyle(
+
+
+                                                                                        fontSize: 14),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
                                                                           Row(
-                                                                        children: [
-                                                                          Text(
-                                                                              '매도단가: ',
-                                                                              style: TextStyle(fontSize: 14)),
-                                                                          Text(
-                                                                            data[index][i][j]['단가'].toString() +
-                                                                                '원',
-                                                                            style: TextStyle(
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontFamily: 'Strong',
-                                                                                fontSize: 14),
+                                                                            children: [
+                                                                              Text(
+                                                                                  '수량: ',
+                                                                                  style:
+                                                                                  TextStyle(fontSize: 14)),
+                                                                              Text(
+                                                                                data[index][i][j]['수량'] +
+                                                                                    '주',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 14,
+
+                                                                                ),
+                                                                              ),
+                                                                            ],
                                                                           ),
                                                                         ],
                                                                       ),
                                                                     ),
-                                                                  Row(
-                                                                    children: [
-                                                                      Text(
-                                                                          '수량: ',
-                                                                          style:
-                                                                              TextStyle(fontSize: 14)),
-                                                                      Text(
-                                                                          data[index][i][j]['수량'] +
-                                                                              '주',
-                                                                          style: TextStyle(
-                                                                              fontSize: 14,
-                                                                              fontFamily: 'Strong',
-                                                                              fontWeight: FontWeight.bold)),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              '총 ' +
-                                                                  (int.parse(data[index][i][j]
-                                                                              [
-                                                                              '수량']) *
-                                                                          int.parse(data[index][i][j]
+                                                                    Text(
+                                                                      '총 ' +
+                                                                          (int.parse(data[index][i][j]
+                                                                          [
+                                                                          '수량']) *
+                                                                              int.parse(data[index][i][j]
                                                                               [
                                                                               '단가']))
-                                                                      .toString() +
-                                                                  '원',
-                                                              style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontFamily:
-                                                                      'Strong'),
-                                                            ),
-                                                            Container(
-                                                              child: Card(
-                                                                elevation: 10,
-                                                                child:
+                                                                              .toString() +
+                                                                          '원',
+                                                                      style: TextStyle(
+                                                                        fontSize: 14,
+                                                                        color: Colors
+                                                                            .black,
+
+
+                                                                      ),
+                                                                    ),
                                                                     Container(
-                                                                  width: 200,
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
+                                                                      child: Card(
+                                                                        elevation: 10,
+                                                                        child:
+                                                                        Container(
+                                                                          width: 200,
+                                                                          padding:
+                                                                          EdgeInsets
+                                                                              .all(
                                                                               10),
-                                                                  child: Text(
-                                                                    data[index][i][j]
+                                                                          child: Text(
+                                                                            data[index][i][j]
                                                                             [
                                                                             '이유']
-                                                                        .replaceAll(
-                                                                            "\\n",
-                                                                            "\n"),
-                                                                    maxLines:
-                                                                        40,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                  ),
-                                                                  color: Color(
-                                                                      0xffFFFFA5),
+                                                                                .replaceAll(
+                                                                                "\\n",
+                                                                                "\n"),
+                                                                            maxLines:
+                                                                            40,
+                                                                            overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                          ),
+                                                                          color: Color(
+                                                                              0xffFFFFA5),
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            )
-                                                          ],
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                            ],
-                                          )
-                                        ]),
-                                  ),
+                                                    ],
+                                                  )
+                                                ]),
+                                          ),
+                                        ),
+                                      )
+                                  ],
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                 ),
-                              )
-                          ],
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                        ),
-                      ))
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(
-                    color: Colors.black,
-                    width: 3,
-                  ))),
-                ),
-            ],
-          ));
+                              ))
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                color: Colors.black,
+                                width: 3,
+                              ))),
+                    ),
+                ],
+              ));
         });
   }
 }

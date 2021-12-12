@@ -47,38 +47,47 @@ class _InputPasswordState extends State<InputPassword> {
       );
     } else
       return Scaffold(
-        body: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                child: Text('반갑습니다\n\n로그인을 위해 비밀번호를 입력해주세요', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)
-              ),
-            ),
-            Center(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                child: TextField(
-                  obscureText: true,
-                  controller: passwordController,
-                  decoration: InputDecoration(
-                    hintText: '비밀번호',
-                    border: OutlineInputBorder(),
-                    labelText: '비밀번호',
-                  ),
+        body: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    child: Text('반갑습니다\n\n로그인을 위해 비밀번호를 입력해주세요', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)
                 ),
               ),
-            ),
-            Container(
-              child: TextButton(
-                child: Text('입력'),
-                onPressed: () {
+              Column(
+                children: [
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: TextField(
+                        obscureText: true,
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          hintText: '비밀번호',
+                          border: OutlineInputBorder(),
+                          labelText: '비밀번호',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: TextButton(
+                      child: Text('입력'),
+                      onPressed: () {
 
-                  login();
-                },
+                        login();
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              SizedBox(height: 10,),
+            ],
+          ),
         ),
       );
   }
@@ -90,7 +99,7 @@ class _InputPasswordState extends State<InputPassword> {
     Map data = {"username": widget.userID, "password": passwordController.text};
     var responsee = await http
         .post(Uri.http("13.125.62.90", "api/v2/auth/token/login/"), body: data);
-    print('로그인' + responsee.body);
+
     if (responsee.statusCode == 200) {
       var jsonDataa = json.decode(responsee.body);
       var tokenn = jsonDataa['auth_token'];
@@ -98,7 +107,7 @@ class _InputPasswordState extends State<InputPassword> {
           Uri.http("13.125.62.90", "api/v2/auth/users/me"),
           headers: {"Authorization": "Token ${tokenn}"});
       var user = jsonDecode(utf8.decode(userresponse.bodyBytes));
-      print(user);
+
 
       setState(() {
         _isloading = false;
